@@ -21,11 +21,11 @@ function userLogin(event: Event) {
     })
     .catch(error => {
         loading.value = false
-        console.log("🚀 ~ userLogin ~ error:", error)
         if (error.response.status === 403) {
             authenticationError.value = error.response.data.detail
+        } else {
+            console.error(error.response)
         }
-        console.error(error)
     })
 }
 </script>
@@ -38,7 +38,7 @@ function userLogin(event: Event) {
             <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Login into your account</h2>
         </div>
 
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm pt-6 block text-sm font-semibold leading-6 text-red-600" :class="authenticationError ? 'text-red-600' : 'text-green-600'">
+        <div class="sm:mx-auto sm:w-full sm:max-w-sm pt-6 block text-sm font-semibold leading-6" :class="authenticationError ? 'text-red-600' : 'text-green-600'">
             {{ authenticationError ? authenticationError : signUpConfirmed ? 'Your account has been created successfully. Please login to continue.' : '' }}
         </div>
         
