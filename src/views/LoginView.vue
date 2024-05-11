@@ -1,43 +1,32 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
+import Login from '../components/forms/Login.vue'
+import { useRouter, useRoute } from 'vue-router'
 
-let userAutenticated = ref(false)
-let username = ref('')
+const router = useRouter()
+const route = useRoute()
 
-async function userLogin(event) {
-	const formData = new FormData(event.target)
-	
-	try {
-		const response = await axios.post('http://localhost:8000/api/login', formData)
-		if (response.status === 200) {
-			
-			userAutenticated.value = true
-			username.value = formData.get('username')
-		}
-	} catch (error) {
-		console.error(error)
+let routeQuerySignup = ref('')
+if (typeof route.query.signup === 'string') {
+	routeQuerySignup.value = route.query.signup
+}
+
+function validateLogin(response: any) {
+	if (response.status === 200) {
+		router.push({
+			name: 'home',
+			query: { authenticated: 'true' }
+		})
+	} else {
+		console.error(response)
 	}
 }
 </script>
 
 <template>
-	<main>
-		<div v-if="userAutenticated">
-			<p>Welcome back, {{ username }}</p>
-		</div>
-		
-		<div v-else>
-			<h1>Login</h1>
-			<form @submit.prevent="userLogin">
-				<label for="username">Username</label>
-				<input type="text" id="username" name="username" />
-				
-				<label for="password">Password</label>
-				<input type="password" id="password" name="password" />
-				
-				<button type="submit">Login</button>
-			</form>
+	<main>		
+		<div class="h-screen">
+			<Login :signUpConfirmed="routeQuerySignup" @validate-login="validateLogin" />
 		</div>
 	</main>
 </template>
