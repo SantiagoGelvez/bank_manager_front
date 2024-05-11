@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import axios from 'axios'
+
 import router from '@/router';
 import Loader from '@/components/Loader.vue'
+import { useAuthStore } from '@/stores/authStore'
 
 defineProps(['signUpConfirmed'])
 
-const emit = defineEmits(['validate-login'])
+const auth = useAuthStore()
+
 let authenticationError = ref('')
 let loading = ref(false)
 
@@ -17,7 +20,8 @@ function userLogin(event: Event) {
     axios.post('http://localhost:8000/api/login', formData, {withCredentials: true})
     .then(response => {
         loading.value = false
-        emit('validate-login', response)
+        auth.login(response.data.jwt, response.data.user)
+        router.push({name: 'home'})
     })
     .catch(error => {
         loading.value = false
@@ -32,6 +36,7 @@ function userLogin(event: Event) {
 
 <template>
     <Loader v-if="loading"/>
+
     <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />

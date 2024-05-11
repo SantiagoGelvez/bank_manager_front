@@ -7,19 +7,21 @@ import CommunityIcon from './icons/IconCommunity.vue'
 import SupportIcon from './icons/IconSupport.vue'
 
 import { ref, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/authStore'
 import router from '@/router'
 import axios from 'axios'
 import Loader from './Loader.vue'
 
+const auth = useAuthStore()
+
 let loading = ref(false)
 let initialMessage = ref('')
-let user = ref('')
 
 onMounted(() => {
 	loading.value = true
 	axios.get('http://localhost:8000/api/user', {withCredentials: true})
 	.then(response => {
-		user.value = response.data
+		auth.setUser(response.data)
 		initialMessage.value = `Welcome back, ${response.data.first_name || response.data.username}`
 	})
 	.catch(() => {
@@ -34,9 +36,9 @@ onMounted(() => {
 <template>
 	<Loader v-if="loading"/>
 
-	<h1 class="text-center font-semibold font-xl" :class="user ? 'my-3' : 'my-10'">{{ initialMessage }}</h1>
+	<h1 class="text-center font-semibold font-xl" :class="auth.user ? 'my-3' : 'my-10'">{{ initialMessage }}</h1>
 
-	<main v-if="user">
+	<main v-if="auth.user">
 		<WelcomeItem>
 			<template #icon>
 				<DocumentationIcon />
@@ -117,6 +119,7 @@ onMounted(() => {
 	</main>
 
 	<div v-else class="flex justify-center">
-		<button @click="router.push('login')" class="border px-2 py-1 rounded-md text-sm">Login</button>
+		<button @click="router.push('login')" class="border m-1.5 px-3 py-1.5 rounded-md text-sm">Login</button>
+		<button @click="router.push('signup')" class="border m-1.5 bg-indigo-600 font-semibold text-white shadow-sm px-3 py-1.5 rounded-md text-sm">Sign Up</button>
 	</div>
 </template>

@@ -20,7 +20,7 @@ function validateSignup(response: any) {
 
 <template>
 	<main>		
-		<div class="h-screen">
+		<div class="h-full">
 			<SignUp @validate-signup="validateSignup" />
 		</div>
 	</main>
