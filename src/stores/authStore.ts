@@ -9,7 +9,7 @@ export const useAuthStore = defineStore({
     }),
     getters: {
         isAuthenticated(state) {
-            return !!state.token
+            return !!state.user
         }
     },
     actions: {
@@ -17,7 +17,8 @@ export const useAuthStore = defineStore({
             this.token = token
             this.user = user
         },
-        setUser(user: any) {
+        setUser(token: string, user: any) {
+            this.token = token
             this.user = user
         },
         logout() {

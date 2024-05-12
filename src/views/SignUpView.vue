@@ -5,9 +5,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter()
 
 function validateSignup(response: any) {
-	console.log("The user has been created successfully!")
 	if (response.status === 201) {
-		console.log("Will redirect to login page...")
 		router.push({
 			name: 'login',
 			query: { signup: 'true' }
