@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { Bars3Icon, XMarkIcon, UserCircleIcon } from '@heroicons/vue/24/outline'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 
 import axios from 'axios'
@@ -10,10 +10,7 @@ import { useAuthStore } from '@/stores/authStore';
 const auth = useAuthStore()
 
 const navigation = [
-	{name: 'Dashboard', href: '#', current: true },
-	// { name: 'Team', href: '#', current: false },
-	// { name: 'Projects', href: '#', current: false },
-	// { name: 'Calendar', href: '#', current: false },
+	{name: 'Dashboard', href: '/', current: true },
 ]
 
 function logout() {
@@ -56,27 +53,22 @@ function logout() {
                     </div>
                 </div>
                 
-				<div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                    <button type="button" class="relative bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                        <BellIcon class="h-6 w-6" aria-hidden="true" />
-                    </button>
-                    
+				<div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">                    
                     <!-- Profile dropdown -->
-                    <Menu as="div" class="relative ml-3">
+                    <Menu as="div" class="relative">
                         <div v-if="auth.user">
-                            <MenuButton class="relative flex bg-gray-800 text-gray-400 hover:text-white">
-								<span>{{ auth.user.first_name || auth.user.username }}</span>
+                            <MenuButton class="relative flex bg-gray-800 text-gray-300 font-semibold hover:text-white">
+                                <div class="h-full my-auto">
+                                    <span>{{ auth.user.first_name || auth.user.username }}</span>
+                                </div>
+                                <UserCircleIcon class="h-8 w-8 ml-2" aria-hidden="true" />
                             </MenuButton>
                         </div>
                         
 						<transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
                             <MenuItems class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                 <MenuItem v-slot="{ active }">
-                                    <a href="#" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">Your Profile</a>
-                                </MenuItem>
-                                
-								<MenuItem v-slot="{ active }">
-                                    <a href="#" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">Settings</a>
+                                    <a href="/profile" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">Profile</a>
                                 </MenuItem>
                                 
 								<MenuItem v-slot="{ active }">
