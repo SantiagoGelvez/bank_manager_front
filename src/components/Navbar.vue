@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Bars3Icon, XMarkIcon, UserCircleIcon } from '@heroicons/vue/24/outline'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-
+import swal from 'sweetalert2'
 import axios from 'axios'
 import router from '@/router'
 import { RouterLink } from 'vue-router';
@@ -14,6 +14,22 @@ const navigation = [
 ]
 
 function logout() {
+    swal.fire({
+        title: 'Logout',
+        text: 'Are you sure you want to logout?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+    })
+    .then(result => {
+        if (result.isConfirmed) {
+            confirmLogout()
+        }
+    })
+}
+
+function confirmLogout() {
 	axios.post('http://localhost:8000/api/logout', {}, {withCredentials: true})
 	.then(() => {
 		auth.logout()

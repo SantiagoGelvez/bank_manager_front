@@ -2,7 +2,6 @@
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle, DialogDescription } from '@headlessui/vue'
 import { CurrencyDollarIcon, BanknotesIcon } from '@heroicons/vue/24/solid'
 import { ArrowPathIcon, ArchiveBoxArrowDownIcon, ArrowsUpDownIcon } from '@heroicons/vue/24/outline'
-import { FwbButton, FwbTooltip } from 'flowbite-vue'
 import { useAuthStore } from '@/stores/authStore'
 import { ref, onMounted } from 'vue'
 import swal from 'sweetalert2'
@@ -144,17 +143,26 @@ onMounted(() => {
 						<td class="px-4 py-2">{{ account.actual_status.name }}</td>
 						<td class="px-4 py-2">{{ toCurrency(account.total_balance) }}</td>
 						<td class="px-4 py-2 flex justify-evenly">
-							<button @click="openModalDeposit(account)" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
-								<ArrowPathIcon class="h-5 w-5" />
-							</button>
+							<div class="has-tooltip">
+								<span class="tooltip rounded ring-1 ring-indigo-600 text-sm shadow-lg p-1 bg-white -mt-8">Deposit</span>
+								<button @click="openModalDeposit(account)" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
+									<ArrowPathIcon class="h-5 w-5" />
+								</button>
+							</div>
 
-							<button @click="openModalWithdraw(account)" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
-								<ArchiveBoxArrowDownIcon class="h-5 w-5" />
-							</button>
+							<div class="has-tooltip">
+								<span class="tooltip rounded ring-1 ring-indigo-600 text-sm shadow-lg p-1 bg-white -mt-8">Withdraw</span>
+								<button @click="openModalWithdraw(account)" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
+									<ArchiveBoxArrowDownIcon class="h-5 w-5" />
+								</button>
+							</div>
 
-							<button @click="router.push({name: 'transactions', params: {uuid: account.uuid}})" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
+							<div class="has-tooltip">
+								<span class="tooltip rounded ring-1 ring-indigo-600 text-sm shadow-lg p-1 bg-white -mt-8">Transactions</span>
+								<button @click="router.push({name: 'transactions', params: {uuid: account.uuid}})" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
 								<ArrowsUpDownIcon class="h-5 w-5" />
 							</button>
+							</div>
 						</td>
 					</tr>
 				</tbody>

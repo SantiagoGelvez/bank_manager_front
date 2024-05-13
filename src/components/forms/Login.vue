@@ -21,7 +21,7 @@ function userLogin(event: Event) {
     .then(response => {
         loading.value = false
         auth.login(response.data.jwt, response.data.user)
-        router.push({name: 'home'})
+        router.push({path: '/'})
     })
     .catch(error => {
         loading.value = false
