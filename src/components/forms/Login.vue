@@ -75,7 +75,7 @@ function userLogin(event: Event) {
             </form>
             
             <div class="mt-3">
-                <button @click="router.push('signup')" class="flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm border hover:border-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Don't have an account? Create one</button>
+                <button @click="router.push({path: '/signup'})" class="flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm border hover:border-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Don't have an account? Create one</button>
             </div>
         </div>
     </div>

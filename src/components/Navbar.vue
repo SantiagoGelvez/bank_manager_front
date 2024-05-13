@@ -17,7 +17,7 @@ function logout() {
 	axios.post('http://localhost:8000/api/logout', {}, {withCredentials: true})
 	.then(() => {
 		auth.logout()
-		router.push('login')
+		router.push({path: '/login'})
 	})
 }
 </script>

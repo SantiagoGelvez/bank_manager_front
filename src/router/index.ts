@@ -28,6 +28,11 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: () => import('../views/ProfileView.vue')
+    },
+    {
+      path: '/transactions/:uuid',
+      name: 'transactions',
+      component: () => import('../views/TransactionsView.vue')
     }
   ]
 })

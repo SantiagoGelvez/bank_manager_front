@@ -12,7 +12,7 @@ if (!auth.isAuthenticated) {
         auth.setUser(response.data.jwt, response.data.user)
     })
     .catch(() => {
-        router.push('login')
+        router.push({path: '/login'})
         auth.logout()
     })
 }

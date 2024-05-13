@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle, DialogDescription } from '@headlessui/vue'
 import { CurrencyDollarIcon, BanknotesIcon } from '@heroicons/vue/24/solid'
+import { ArrowPathIcon, ArchiveBoxArrowDownIcon, ArrowsUpDownIcon } from '@heroicons/vue/24/outline'
+import { FwbButton, FwbTooltip } from 'flowbite-vue'
 import { useAuthStore } from '@/stores/authStore'
 import { ref, onMounted } from 'vue'
+import swal from 'sweetalert2'
 import Loader from './Loader.vue'
 import router from '@/router'
 import axios from 'axios'
@@ -63,12 +66,12 @@ function makeDeposit(event: Event) {
 	const formData = new FormData(event.target as HTMLFormElement)
 	axios.post(`http://localhost:8000/api/accounts/${accountSelected.value.uuid}/deposit`, formData, {withCredentials: true})
 	.then(() => {
-		loading.value = false
+		swal.fire('Success', 'Deposit made successfully', 'success')
 		closeModalDeposit()
 		getBankAccounts()
 	})
 	.catch(error => {
-		loading.value = false
+		swal.fire('Error', 'An error occurred while making the deposit', 'error')
 		console.error(error)
 	})
 }
@@ -78,12 +81,12 @@ function makeWithdraw(event: Event) {
 	const formData = new FormData(event.target as HTMLFormElement)
 	axios.post(`http://localhost:8000/api/accounts/${accountSelected.value.uuid}/withdraw`, formData, {withCredentials: true})
 	.then(() => {
-		loading.value = false
+		swal.fire('Success', 'Withdraw made successfully', 'success')
 		closeModalWithdraw()
 		getBankAccounts()
 	})
 	.catch(error => {
-		loading.value = false
+		swal.fire('Error', 'An error occurred while making the withdraw', 'error')
 		console.error(error)
 	})
 }
@@ -99,11 +102,13 @@ function addNewAccount(event: Event) {
 	axios.post('http://localhost:8000/api/accounts/register', formData, {withCredentials: true})
 	.then(() => {
 		loading.value = false
+		swal.fire('Success', 'Account created successfully', 'success')
 		closeModalNewAccount()
 		getBankAccounts()
 	})
 	.catch(error => {
 		loading.value = false
+		swal.fire('Error', 'An error occurred while creating the account', 'error')
 		console.error(error)
 	})
 }
@@ -118,7 +123,7 @@ onMounted(() => {
 	<Loader v-if="loading" />
 	
 	<main v-if="auth.isAuthenticated">
-		<h1 class="text-center font-semibold font-xl pt-10 pb-3">Hi {{ auth.user.first_name || auth.user.username }}! Welcome to your bank accounts</h1>
+		<h1 class="text-center text-xl pt-10 pb-3"><span class="font-semibold">Hi {{ auth.user.first_name || auth.user.username }}!</span> Welcome to your bank accounts</h1>
 		<div class="flex justify-center mt-5">
 			<table class="table-fixed divide-y-4 w-3/4 text-center">
 				<thead>
@@ -126,7 +131,7 @@ onMounted(() => {
 						<th class="px-4 py-2">Account Type</th>
 						<th class="px-4 py-2">Account Number</th>
 						<th class="px-4 py-2">Account Name</th>
-						<th class="px-4 py-2">Status</th>
+						<th class="px-4 py-2">Account Status</th>
 						<th class="px-4 py-2">Balance</th>
 						<th class="px-4 py-2">Actions</th>
 					</tr>
@@ -139,8 +144,17 @@ onMounted(() => {
 						<td class="px-4 py-2">{{ account.actual_status.name }}</td>
 						<td class="px-4 py-2">{{ toCurrency(account.total_balance) }}</td>
 						<td class="px-4 py-2 flex justify-evenly">
-							<button @click="openModalDeposit(account)" class="border bg-indigo-600 font-semibold text-white shadow-sm px-3 py-1.5 rounded-md text-sm">Deposit</button>
-							<button @click="openModalWithdraw(account)" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm">Withdraw</button>
+							<button @click="openModalDeposit(account)" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
+								<ArrowPathIcon class="h-5 w-5" />
+							</button>
+
+							<button @click="openModalWithdraw(account)" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
+								<ArchiveBoxArrowDownIcon class="h-5 w-5" />
+							</button>
+
+							<button @click="router.push({name: 'transactions', params: {uuid: account.uuid}})" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
+								<ArrowsUpDownIcon class="h-5 w-5" />
+							</button>
 						</td>
 					</tr>
 				</tbody>
@@ -324,10 +338,10 @@ onMounted(() => {
 	</main>
 	
 	<div v-else>
-		<h1 class="text-center font-semibold font-xl pt-10 pb-3">You are not logged in</h1>
+		<h1 class="text-center font-semibold text-xl pt-10 pb-3">You are not logged in</h1>
 		<div class="flex justify-center">
-			<button @click="router.push('login')" class="border m-1.5 px-3 py-1.5 rounded-md text-sm">Login</button>
-			<button @click="router.push('signup')" class="border m-1.5 bg-indigo-600 font-semibold text-white shadow-sm px-3 py-1.5 rounded-md text-sm">Sign Up</button>
+			<button @click="router.push({path: '/login'})" class="border m-1.5 px-3 py-1.5 rounded-md text-sm">Login</button>
+			<button @click="router.push({path: '/signup'})" class="border m-1.5 bg-indigo-600 font-semibold text-white shadow-sm px-3 py-1.5 rounded-md text-sm">Sign Up</button>
 		</div>
 	</div>
 </template>
