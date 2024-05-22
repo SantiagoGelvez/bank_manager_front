@@ -8,13 +8,34 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import Loader from '@/components/Loader.vue';
 
+interface Account {
+	account_type: {
+		name: string
+	},
+	account_number: string,
+	total_balance: number,
+	account_name: string
+}
+
+interface Transaction {
+	created_at: string,
+	transaction_type: {
+		name: string,
+		code: string
+	},
+	amount: number,
+	transaction_status: {
+		name: string
+	}
+}
+
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
 const uuid = route.params.uuid
-const account = ref({})
-const transactions = ref([])
+const account = ref<Account | null>(null)
+const transactions = ref<Transaction[]>([])
 const loading = ref(false)
 
 if (!auth.isAuthenticated) {
@@ -93,7 +114,7 @@ onMounted(() => {
 				<ArrowLeftIcon class="h-8 w-8 text-gray-500 cursor-pointer" @click="router.push({name: 'home'})" />
 			</div>
 
-			<div class="text-center w-3/4 mx-auto px-10">
+			<div v-if="account" class="text-center w-3/4 mx-auto px-10">
 				<div class="flex justify-evenly pb-8">
 					<div>
 						<div class="text-sm">Account Type</div>
