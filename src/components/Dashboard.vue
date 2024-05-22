@@ -9,11 +9,33 @@ import Loader from './Loader.vue'
 import router from '@/router'
 import axios from 'axios'
 
+interface Account {
+	account_type: {
+		name: string
+	},
+	account_number: string,
+	total_balance: number,
+	account_name: string,
+	uuid: string
+	actual_status: {
+		name: string
+	}
+}
+
+interface AccountType {
+	code: string,
+	name: string
+}
+
 const auth = useAuthStore()
 const isOpenNewAccount = ref(false)
 const isOpenDeposit = ref(false)
 const isOpenWithdraw = ref(false)
-const accountSelected = ref('')
+const accountSelected = ref<Account | null>(null)
+
+let accounts = ref<Account[]>([])
+let accountTypes = ref<AccountType[]>([])
+let loading = ref(false)
 
 function closeModalNewAccount() {
 	isOpenNewAccount.value = false
@@ -24,26 +46,26 @@ function openModalNewAccount() {
 
 function closeModalDeposit() {
 	isOpenDeposit.value = false
-	accountSelected.value = ''
+	accountSelected.value = null
 }
 function openModalDeposit(accountUuid: string) {
 	isOpenDeposit.value = true
-	accountSelected.value = accountUuid
+	accountSelected.value = findAccountByUuid(accountUuid)
 }
 
 function closeModalWithdraw() {
 	isOpenWithdraw.value = false
-	accountSelected.value = ''
+	accountSelected.value = null
 }
 
 function openModalWithdraw(accountUuid: string) {
 	isOpenWithdraw.value = true
-	accountSelected.value = accountUuid
+	accountSelected.value = findAccountByUuid(accountUuid)
 }
 
-let accounts = ref([])
-let accountTypes = ref([])
-let loading = ref(false)
+function findAccountByUuid(uuid: string): Account | null {
+    return accounts.value.find(account => account.uuid === uuid) || null;
+}
 
 function getBankAccounts() {
 	if (auth.isAuthenticated) {
@@ -63,6 +85,12 @@ function toCurrency(value: number) {
 function makeDeposit(event: Event) {
 	loading.value = true
 	const formData = new FormData(event.target as HTMLFormElement)
+	
+	if (!accountSelected.value) {
+		swal.fire('Error', 'An error occurred while making the deposit', 'error')
+		return
+	}
+
 	axios.post(`http://localhost:8000/api/accounts/${accountSelected.value.uuid}/deposit`, formData, {withCredentials: true})
 	.then(() => {
 		swal.fire('Success', 'Deposit made successfully', 'success')
@@ -78,6 +106,12 @@ function makeDeposit(event: Event) {
 function makeWithdraw(event: Event) {
 	loading.value = true
 	const formData = new FormData(event.target as HTMLFormElement)
+
+	if (!accountSelected.value) {
+		swal.fire('Error', 'An error occurred while making the withdraw', 'error')
+		return
+	}
+
 	axios.post(`http://localhost:8000/api/accounts/${accountSelected.value.uuid}/withdraw`, formData, {withCredentials: true})
 	.then(() => {
 		swal.fire('Success', 'Withdraw made successfully', 'success')
@@ -145,14 +179,14 @@ onMounted(() => {
 						<td class="px-4 py-2 flex justify-evenly">
 							<div class="has-tooltip">
 								<span class="tooltip rounded ring-1 ring-indigo-600 text-sm shadow-lg p-1 bg-white -mt-8">Deposit</span>
-								<button @click="openModalDeposit(account)" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
+								<button @click="openModalDeposit(account.uuid)" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
 									<ArrowPathIcon class="h-5 w-5" />
 								</button>
 							</div>
 
 							<div class="has-tooltip">
 								<span class="tooltip rounded ring-1 ring-indigo-600 text-sm shadow-lg p-1 bg-white -mt-8">Withdraw</span>
-								<button @click="openModalWithdraw(account)" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
+								<button @click="openModalWithdraw(account.uuid)" class="border font-semibold text-gray-900 shadow-sm px-3 py-1.5 rounded-md text-sm hover:bg-indigo-600 hover:text-white">
 									<ArchiveBoxArrowDownIcon class="h-5 w-5" />
 								</button>
 							</div>
@@ -258,7 +292,7 @@ onMounted(() => {
 									Deposit money
 								</DialogTitle>
 
-								<DialogDescription as="div" class="mt-6 p-2">
+								<DialogDescription as="div" class="mt-6 p-2" v-if="accountSelected">
 									<form @submit.prevent="makeDeposit">
 										<div>
 											<label for="account_number" class="block text-sm font-medium leading-6 text-gray-900">Account Number</label>
@@ -309,7 +343,7 @@ onMounted(() => {
 									Withdraw cash
 								</DialogTitle>
 
-								<DialogDescription as="div" class="mt-6 p-2">
+								<DialogDescription as="div" class="mt-6 p-2" v-if="accountSelected">
 									<form @submit.prevent="makeWithdraw">
 										<div>
 											<label for="account_number" class="block text-sm font-medium leading-6 text-gray-900">Account Number</label>
