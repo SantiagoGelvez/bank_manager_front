@@ -31,7 +31,7 @@ const auth = useAuthStore()
 const isOpenNewAccount = ref(false)
 const isOpenDeposit = ref(false)
 const isOpenWithdraw = ref(false)
-const axiosRequest = inject('axios') as AxiosInstance
+const axiosRequest = inject('AxiosRequest') as AxiosInstance
 const accountSelected = ref<Account | null>(null)
 
 let accounts = ref<Account[]>([])

@@ -27,6 +27,6 @@ app.config.globalProperties.$filters = {
 	}
 }
 
-app.provide('axiosRequest', axiosInstance)
+app.provide('AxiosRequest', axiosInstance)
 
 app.mount('#app')

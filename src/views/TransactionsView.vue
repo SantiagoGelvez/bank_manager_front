@@ -32,7 +32,7 @@ interface Transaction {
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
-const axiosRequest = inject('axios') as AxiosInstance
+const axiosRequest = inject('AxiosRequest') as AxiosInstance
 
 const uuid = route.params.uuid
 const account = ref<Account | null>(null)

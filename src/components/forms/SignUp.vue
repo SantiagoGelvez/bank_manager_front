@@ -5,7 +5,7 @@ import router from '@/router';
 import Loader from '@/components/Loader.vue'
 
 const emit = defineEmits(['validate-signup'])
-const axiosRequest = inject('axios') as AxiosInstance
+const axiosRequest = inject('AxiosRequest') as AxiosInstance
 
 let authenticationError = ref('')
 let loading = ref(false)

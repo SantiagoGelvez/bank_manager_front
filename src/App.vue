@@ -7,7 +7,7 @@ import { inject, ref } from 'vue'
 import Loader from './components/Loader.vue';
 
 const auth = useAuthStore()
-const axiosRequest = inject('axios') as AxiosInstance
+const axiosRequest = inject('AxiosRequest') as AxiosInstance
 
 let loading = ref(false)
 

@@ -9,7 +9,7 @@ import { useAuthStore } from '@/stores/authStore'
 defineProps(['signUpConfirmed'])
 
 const auth = useAuthStore()
-const axiosRequest = inject('axios') as AxiosInstance
+const axiosRequest = inject('AxiosRequest') as AxiosInstance
 
 let authenticationError = ref('')
 let loading = ref(false)

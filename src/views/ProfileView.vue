@@ -6,7 +6,7 @@ import swal from 'sweetalert2'
 import { useAuthStore } from '@/stores/authStore';
 
 const auth = useAuthStore();
-const axiosRequest = inject('axios') as AxiosInstance
+const axiosRequest = inject('AxiosRequest') as AxiosInstance
 
 if (!auth.isAuthenticated) {
     axiosRequest.get('user')

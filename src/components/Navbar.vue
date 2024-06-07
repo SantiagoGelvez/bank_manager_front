@@ -9,7 +9,7 @@ import { RouterLink } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 
 const auth = useAuthStore()
-const axiosRequest = inject('axios') as AxiosInstance
+const axiosRequest = inject('AxiosRequest') as AxiosInstance
 
 const navigation = [
 	{name: 'Dashboard', href: '/', current: true },
