@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import axios from 'axios'
+import { ref, inject } from 'vue'
+import type { AxiosInstance } from 'axios'
 
 import router from '@/router';
 import Loader from '@/components/Loader.vue'
@@ -9,6 +9,7 @@ import { useAuthStore } from '@/stores/authStore'
 defineProps(['signUpConfirmed'])
 
 const auth = useAuthStore()
+const axiosRequest = inject('axios') as AxiosInstance
 
 let authenticationError = ref('')
 let loading = ref(false)
@@ -17,7 +18,7 @@ function userLogin(event: Event) {
     loading.value = true
     const formData = new FormData(event.target as HTMLFormElement)
     
-    axios.post('http://localhost:8000/api/login', formData, {withCredentials: true})
+    axiosRequest.post('login', formData)
     .then(response => {
         loading.value = false
         auth.login(response.data.jwt, response.data.user)

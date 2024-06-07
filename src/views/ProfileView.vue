@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import axios from 'axios'
+import type { AxiosInstance } from 'axios'
+import { inject } from 'vue'
 import router from '@/router'
 import swal from 'sweetalert2'
 import { useAuthStore } from '@/stores/authStore';
 
 const auth = useAuthStore();
+const axiosRequest = inject('axios') as AxiosInstance
 
 if (!auth.isAuthenticated) {
-    axios.get('http://localhost:8000/api/user', {withCredentials: true})
+    axiosRequest.get('user')
     .then(response => {
         auth.setUser(response.data.jwt, response.data.user)
     })
@@ -34,7 +36,7 @@ function updateUser(event: Event) {
 
 function submitUpdate(event: Event) {
     const formData = new FormData(event.target as HTMLFormElement)
-    axios.put('http://localhost:8000/api/user', formData, {withCredentials: true})
+    axiosRequest.put('user', formData)
     .then(response => {
         auth.setUser(response.data.jwt, response.data.user)
         swal.fire('Success', 'Profile updated successfully', 'success')

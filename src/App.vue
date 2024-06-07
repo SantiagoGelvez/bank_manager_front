@@ -2,16 +2,18 @@
 import { RouterView } from 'vue-router'
 import Navbar from './components/Navbar.vue';
 import { useAuthStore } from './stores/authStore'
-import axios from 'axios'
-import { ref } from 'vue'
+import type { AxiosInstance } from 'axios'
+import { inject, ref } from 'vue'
 import Loader from './components/Loader.vue';
 
 const auth = useAuthStore()
+const axiosRequest = inject('axios') as AxiosInstance
+
 let loading = ref(false)
 
 if (!auth.isAuthenticated) {
     loading.value = true
-    axios.get('http://localhost:8000/api/user', {withCredentials: true})
+    axiosRequest.get('user')
     .then(response => {
         auth.setUser(response.data.jwt, response.data.user)
     })

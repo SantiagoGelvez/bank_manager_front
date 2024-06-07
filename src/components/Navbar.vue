@@ -2,12 +2,14 @@
 import { Bars3Icon, XMarkIcon, UserCircleIcon } from '@heroicons/vue/24/outline'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import swal from 'sweetalert2'
-import axios from 'axios'
+import { inject } from 'vue'
+import type { AxiosInstance } from 'axios'
 import router from '@/router'
 import { RouterLink } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 
 const auth = useAuthStore()
+const axiosRequest = inject('axios') as AxiosInstance
 
 const navigation = [
 	{name: 'Dashboard', href: '/', current: true },
@@ -30,7 +32,7 @@ function logout() {
 }
 
 function confirmLogout() {
-	axios.post('http://localhost:8000/api/logout', {}, {withCredentials: true})
+	axiosRequest.post('logout', {})
 	.then(() => {
 		auth.logout()
 		router.push({path: '/login'})

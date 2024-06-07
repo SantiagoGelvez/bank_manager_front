@@ -3,11 +3,11 @@ import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle, Dial
 import { CurrencyDollarIcon, BanknotesIcon } from '@heroicons/vue/24/solid'
 import { ArrowPathIcon, ArchiveBoxArrowDownIcon, ArrowsUpDownIcon } from '@heroicons/vue/24/outline'
 import { useAuthStore } from '@/stores/authStore'
-import { ref, onMounted } from 'vue'
+import { ref, inject, onMounted } from 'vue'
 import swal from 'sweetalert2'
 import Loader from './Loader.vue'
 import router from '@/router'
-import axios from 'axios'
+import type { AxiosInstance } from 'axios'
 
 interface Account {
 	account_type: {
@@ -31,6 +31,7 @@ const auth = useAuthStore()
 const isOpenNewAccount = ref(false)
 const isOpenDeposit = ref(false)
 const isOpenWithdraw = ref(false)
+const axiosRequest = inject('axios') as AxiosInstance
 const accountSelected = ref<Account | null>(null)
 
 let accounts = ref<Account[]>([])
@@ -70,7 +71,7 @@ function findAccountByUuid(uuid: string): Account | null {
 function getBankAccounts() {
 	if (auth.isAuthenticated) {
 		loading.value = true
-		axios.get('http://localhost:8000/api/accounts', {withCredentials: true})
+		axiosRequest.get('accounts')
 		.then(response => {
 			loading.value = false
 			accounts.value = response.data
@@ -91,7 +92,7 @@ function makeDeposit(event: Event) {
 		return
 	}
 
-	axios.post(`http://localhost:8000/api/accounts/${accountSelected.value.uuid}/deposit`, formData, {withCredentials: true})
+	axiosRequest.post(`accounts/${accountSelected.value.uuid}/deposit`, formData)
 	.then(() => {
 		swal.fire('Success', 'Deposit made successfully', 'success')
 		closeModalDeposit()
@@ -112,7 +113,7 @@ function makeWithdraw(event: Event) {
 		return
 	}
 
-	axios.post(`http://localhost:8000/api/accounts/${accountSelected.value.uuid}/withdraw`, formData, {withCredentials: true})
+	axiosRequest.post(`accounts/${accountSelected.value.uuid}/withdraw`, formData)
 	.then(() => {
 		swal.fire('Success', 'Withdraw made successfully', 'success')
 		closeModalWithdraw()
@@ -125,14 +126,14 @@ function makeWithdraw(event: Event) {
 }
 
 async function getAccountTypes() {
-	const response = await axios.get('http://localhost:8000/api/accounts/types')
+	const response = await axiosRequest.get('accounts/types')
 	accountTypes.value = response.data
 }
 
 function addNewAccount(event: Event) {
 	loading.value = true
 	const formData = new FormData(event.target as HTMLFormElement)
-	axios.post('http://localhost:8000/api/accounts/register', formData, {withCredentials: true})
+	axiosRequest.post('accounts/register', formData)
 	.then(() => {
 		loading.value = false
 		swal.fire('Success', 'Account created successfully', 'success')

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import axios from 'axios'
+import { ref, inject } from 'vue'
+import type {AxiosInstance } from 'axios'
 import router from '@/router';
 import Loader from '@/components/Loader.vue'
 
 const emit = defineEmits(['validate-signup'])
+const axiosRequest = inject('axios') as AxiosInstance
+
 let authenticationError = ref('')
 let loading = ref(false)
 
@@ -12,7 +14,7 @@ function signUpUser(event: Event) {
     loading.value = true
     const formData = new FormData(event.target as HTMLFormElement)
     
-    axios.post('http://localhost:8000/api/signup', formData)
+    axiosRequest.post('signup', formData)
     .then(response => {
         loading.value = false
         emit('validate-signup', response)

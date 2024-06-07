@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import axios from 'axios';
-import { ref } from 'vue';
+import type { AxiosInstance } from 'axios';
+import { ref, inject } from 'vue';
 import { onMounted } from 'vue';
 import swal from 'sweetalert2';
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
@@ -32,6 +32,7 @@ interface Transaction {
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const axiosRequest = inject('axios') as AxiosInstance
 
 const uuid = route.params.uuid
 const account = ref<Account | null>(null)
@@ -39,7 +40,7 @@ const transactions = ref<Transaction[]>([])
 const loading = ref(false)
 
 if (!auth.isAuthenticated) {
-    axios.get('http://localhost:8000/api/user', {withCredentials: true})
+    axiosRequest.get('user')
     .then(response => {
         auth.setUser(response.data.jwt, response.data.user)
     })
@@ -50,7 +51,7 @@ if (!auth.isAuthenticated) {
 }
 
 function getTransactions() {
-    axios.get(`http://localhost:8000/api/transactions/${uuid}`, {withCredentials: true})
+    axiosRequest.get(`transactions/${uuid}`)
     .then(response => {
         transactions.value = response.data
     })
@@ -71,7 +72,7 @@ function getTransactions() {
 
 function getAccountDetails() {
 	loading.value = true
-	axios.get(`http://localhost:8000/api/accounts/${uuid}`, {withCredentials: true})
+	axiosRequest.get(`accounts/${uuid}`)
 	.then(response => {
 		loading.value = false
 		account.value = response.data
