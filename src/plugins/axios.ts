@@ -1,12 +1,12 @@
 import axios from 'axios';
 import Swal from 'sweetalert2'
 
-const axiosAPI = axios.create({
+const apiClient = axios.create({
     baseURL: 'http://localhost:8001/api/',
     withCredentials: true,
 })
 
-axiosAPI.interceptors.response.use(function (response) {
+apiClient.interceptors.response.use(function (response) {
     return response;
 }, function (error) {
     if (error.response.status === 'EE_NETWORK' || error.response.status === 500) {
@@ -19,4 +19,4 @@ axiosAPI.interceptors.response.use(function (response) {
     return Promise.reject(error);
 });
 
-export default axiosAPI;
+export default apiClient;

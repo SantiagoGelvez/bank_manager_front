@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Dashboard from '../components/Dashboard.vue'
+import HelloWorld from '../components/HelloWorld.vue'
 </script>
 
 <template>
 	<main>
-		<Dashboard />
+		<HelloWorld msg="BANK ACCOUNT"/>
 	</main>
 </template>

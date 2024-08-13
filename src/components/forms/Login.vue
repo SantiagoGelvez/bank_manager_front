@@ -1,55 +1,37 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
-import type { AxiosInstance } from 'axios'
-
-import router from '@/router';
-import Loader from '@/components/Loader.vue'
 import { useAuthStore } from '@/stores/authStore'
-
-defineProps(['signUpConfirmed'])
+import { useRouter } from 'vue-router';
 
 const auth = useAuthStore()
-const axiosRequest = inject('AxiosRequest') as AxiosInstance
+const router = useRouter()
 
-let authenticationError = ref('')
-let loading = ref(false)
+const login = async (data: any) => {
+    const formData = new FormData(data.target)
+    const usernameValue = formData.get('username') as string | ''
+    const passwordValue = formData.get('password') as string | ''
 
-function userLogin(event: Event) {
-    loading.value = true
-    const formData = new FormData(event.target as HTMLFormElement)
-    
-    axiosRequest.post('login', formData)
-    .then(response => {
-        loading.value = false
-        auth.login(response.data.jwt, response.data.user)
-        router.push({path: '/'})
-    })
-    .catch(error => {
-        loading.value = false
-        if (error.response.status === 403) {
-            authenticationError.value = error.response.data.detail
-        } else {
-            console.error(error.response)
-        }
-    })
+    try {
+        await auth.login({username: usernameValue, password: passwordValue})
+        router.push('/dashboard')
+    } catch (error) {
+        alert('Error al iniciar sesion')
+    }
 }
 </script>
 
 <template>
-    <Loader v-if="loading"/>
-
     <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
             <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Login into your account</h2>
         </div>
 
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm pt-6 block text-sm font-semibold leading-6" :class="authenticationError ? 'text-red-600' : 'text-green-600'">
+        <!-- <div class="sm:mx-auto sm:w-full sm:max-w-sm pt-6 block text-sm font-semibold leading-6" :class="authenticationError ? 'text-red-600' : 'text-green-600'">
             {{ authenticationError ? authenticationError : signUpConfirmed ? 'Your account has been created successfully. Please login to continue.' : '' }}
-        </div>
+        </div> -->
         
         <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form class="space-y-6" @submit.prevent="userLogin">
+            <form class="space-y-6" @submit.prevent="login">
                 <div>
                     <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
                     <div class="mt-2">

@@ -1,56 +1,45 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
-import type {AxiosInstance } from 'axios'
-import router from '@/router';
-import Loader from '@/components/Loader.vue'
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/authStore';
+import { useRouter } from 'vue-router';
 
-const emit = defineEmits(['validate-signup'])
-const axiosRequest = inject('AxiosRequest') as AxiosInstance
+const auth = useAuthStore()
+const router = useRouter()
 
-let authenticationError = ref('')
-let loading = ref(false)
+const username = ref('')
+const firstName = ref('')
+const lastName = ref('')
+const email = ref('')
+const password = ref('')
 
-function signUpUser(event: Event) {
-    loading.value = true
-    const formData = new FormData(event.target as HTMLFormElement)
-    
-    axiosRequest.post('signup', formData)
-    .then(response => {
-        loading.value = false
-        emit('validate-signup', response)
-    })
-    .catch(error => {
-        loading.value = false
-        if (error.response.status === 400) {
-            if (error.response.data && error.response.data.username) {
-                authenticationError.value = error.response.data.username[0]
-            } else if (error.response.data && error.response.data.email) {
-                authenticationError.value = error.response.data.email[0]
-            } else {
-                authenticationError.value = error.response.data.detail
-            }
-        } else if (error.response.status === 403) {
-            authenticationError.value = error.response.data.detail
-        }
-        console.error(error)
-    })
+const signup = async () => {
+    try {
+        auth.register({
+            username: username.value,
+            firstName: firstName.value,
+            lastName: lastName.value,
+            email: email.value,
+            password: password.value
+        })
+    } catch (error) {
+        alert('Error en el registro')
+    }
 }
 </script>
 
 <template>
-    <Loader v-if="loading"/>
     <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
             <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create your own account</h2>
         </div>
 
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm pt-6 block text-sm font-medium leading-6 text-red-600">
+        <!-- <div class="sm:mx-auto sm:w-full sm:max-w-sm pt-6 block text-sm font-medium leading-6 text-red-600">
             {{ authenticationError }}
-        </div>
+        </div> -->
         
         <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form class="space-y-4" @submit.prevent="signUpUser">
+            <form class="space-y-4" @submit.prevent="signup">
                 <div>
                     <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
                     <div class="mt-2">

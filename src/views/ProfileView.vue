@@ -4,20 +4,9 @@ import { inject } from 'vue'
 import router from '@/router'
 import swal from 'sweetalert2'
 import { useAuthStore } from '@/stores/authStore';
+import apiClient from '@/plugins/axios';
 
 const auth = useAuthStore();
-const axiosRequest = inject('AxiosRequest') as AxiosInstance
-
-if (!auth.isAuthenticated) {
-    axiosRequest.get('user')
-    .then(response => {
-        auth.setUser(response.data.jwt, response.data.user)
-    })
-    .catch(() => {
-        router.push({path: '/login'})
-        auth.logout()
-    })
-}
 
 function updateUser(event: Event) {
     swal.fire({
@@ -36,9 +25,9 @@ function updateUser(event: Event) {
 
 function submitUpdate(event: Event) {
     const formData = new FormData(event.target as HTMLFormElement)
-    axiosRequest.put('user', formData)
+    apiClient.put('user', formData)
     .then(response => {
-        auth.setUser(response.data.jwt, response.data.user)
+        auth.updateUser(response.data.user)
         swal.fire('Success', 'Profile updated successfully', 'success')
     })
     .catch(error => {
