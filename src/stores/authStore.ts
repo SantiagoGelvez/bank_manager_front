@@ -47,9 +47,7 @@ export const useAuthStore = defineStore('authStore', {
             apiClient.post('logout')
 
             this.user = null
-            this.token = null
-
-            window.location.href = '/'
+            this.token = null 
         },
 
         async checkAuth() {

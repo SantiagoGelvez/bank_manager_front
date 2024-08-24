@@ -81,6 +81,9 @@ async function getBankAccounts() {
 			loading.value = false
 			accounts.value = response.data
 		})
+	} else {
+		router.push({path: '/'})
+		auth.logout()
 	}
 }
 

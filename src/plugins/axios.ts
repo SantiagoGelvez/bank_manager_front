@@ -2,7 +2,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2'
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8001/api/',
+    baseURL: import.meta.env.VITE_DJANGO_API_BASE_URL,
     withCredentials: true,
 })
 
