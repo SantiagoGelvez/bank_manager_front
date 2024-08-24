@@ -29,36 +29,36 @@ export const useAuthStore = defineStore('authStore', {
                 this.user = response.data.user
                 this.token = response.data.jwt
             } catch (error) {
-                console.log('Error in loggin in:', error)
                 throw error
             }
         },
 
-        async register(userData: { username: string; firstName: string; lastName: string, email: string; password: string }) {
+        async register(formData: FormData) {
             try {
-                const response = await apiClient.post('register', userData)
+                const response = await apiClient.post('signup', formData)
                 this.user = response.data.user
                 this.token = response.data.jwt
             } catch (error) {
-                console.error('Error registering:', error)
                 throw error
             }
         },
 
         async logout() {
-            const response = await apiClient.post('logout')
+            apiClient.post('logout')
 
             this.user = null
             this.token = null
+
+            window.location.href = '/'
         },
 
         async checkAuth() {
             try {
                 const response = await apiClient.get('user')
+
                 this.user = response.data.user
                 this.token = response.data.jwt
             } catch (error) {
-                console.error('Error fetching user data:', error)
                 this.logout()
             }
         },

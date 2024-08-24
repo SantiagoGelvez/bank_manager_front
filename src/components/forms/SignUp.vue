@@ -1,28 +1,37 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAuthStore } from '@/stores/authStore';
+import Swal from 'sweetalert2';
 import { useRouter } from 'vue-router';
+
+import { useAuthStore } from '@/stores/authStore';
+import { useAlertLoading } from '@/composables/useAlert';
+
+const alertLoading = useAlertLoading()
 
 const auth = useAuthStore()
 const router = useRouter()
 
-const username = ref('')
-const firstName = ref('')
-const lastName = ref('')
-const email = ref('')
-const password = ref('')
+const authenticationError = ref('')
 
-const signup = async () => {
+const signup = async (e: Event) => {
+    alertLoading.show()
+
+    const formData = new FormData(e.target as HTMLFormElement)
     try {
-        auth.register({
-            username: username.value,
-            firstName: firstName.value,
-            lastName: lastName.value,
-            email: email.value,
-            password: password.value
+        await auth.register(formData)
+
+        Swal.fire({
+            title: '¡Registro exitoso!',
+            text: 'En un momento serás redirigido a la página de inicio de sesión',
+            icon: 'success',
+            timer: 2000,
+            confirmButtonText: 'Aceptar'
+        }).then(() => {
+            router.push({name: 'login'})
         })
-    } catch (error) {
-        alert('Error en el registro')
+    } catch (error: any) {
+        authenticationError.value = error?.response?.data?.email ? error?.response?.data?.email[0] : error?.response?.data?.username ? error?.response?.data?.username[0] : 'Ha ocurrido un error, por favor intente nuevamente'
+        alertLoading.hide()
     }
 }
 </script>
@@ -34,9 +43,9 @@ const signup = async () => {
             <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create your own account</h2>
         </div>
 
-        <!-- <div class="sm:mx-auto sm:w-full sm:max-w-sm pt-6 block text-sm font-medium leading-6 text-red-600">
+        <div class="sm:mx-auto sm:w-full sm:max-w-sm pt-6 block text-sm font-medium leading-6 text-red-600">
             {{ authenticationError }}
-        </div> -->
+        </div>
         
         <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
             <form class="space-y-4" @submit.prevent="signup">

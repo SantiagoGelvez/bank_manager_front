@@ -42,7 +42,7 @@ const loading = ref(false)
 if (!auth.isAuthenticated) {
     axiosRequest.get('user')
     .then(response => {
-        auth.setUser(response.data.jwt, response.data.user)
+        auth.checkAuth()
     })
     .catch(() => {
         router.push({path: '/login'})

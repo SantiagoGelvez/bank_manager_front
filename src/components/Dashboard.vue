@@ -70,10 +70,13 @@ function findAccountByUuid(uuid: string): Account | null {
     return accounts.value.find(account => account.uuid === uuid) || null;
 }
 
-function getBankAccounts() {
+async function getBankAccounts() {
+	await auth.checkAuth()
+
 	if (auth.isAuthenticated) {
 		loading.value = true
-		apiClient.get('accounts')
+		
+		await apiClient.get('accounts')
 		.then(response => {
 			loading.value = false
 			accounts.value = response.data
